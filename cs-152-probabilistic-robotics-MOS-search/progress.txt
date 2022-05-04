@@ -1,0 +1,105 @@
+DATE: 4/13/22
+
+SETUP STEPS
+
+- Original repo at: https://h2r.github.io/pomdp-py/html/
+- pip install pomdp_py to run.
+- Run command:
+    python problem.py
+
+USEFUL RESOURCES / LINKS:
+1. pomdp_py structure explanation: https://h2r.github.io/pomdp-py/html/examples.tiger.html
+2. Documentation for OOPOMDP in pomdp_py: https://h2r.github.io/pomdp-py/html/api/pomdp_py.framework.html#module-pomdp_py.framework.oopomdp
+3. Documentation for POMCP planner: https://h2r.github.io/pomdp-py/html/api/pomdp_py.framework.html#module-pomdp_py.framework.oopomdp
+4. Documentation for what the objects mean: https://h2r.github.io/pomdp-py/html/api/pomdp_py.framework.html
+
+
+
+PROJECT REQUIREMENTS
+
+1. Add hints throughout the process instead of at onset.
+2. We want to compare with baseline i.e., hint only at onset.
+3. Potentially incorporate trust variable i.e., bad vs. good hints.
+3. Run experiments:
+    a) with hints
+    b) without hints
+    c) Including trust variable 3 conditions: (all good, all bad, mixed).
+4. Provide robust evaluation / performance measure between conditions.
+
+
+SCRIPTS DESCRIPTION
+
+-- problem.py
+    Main script that is creating the agent, env., sensor, and MOSOOPOMDP.
+
+-- observation_model.py
+    Contains the observation of the robot location at each step i.e., object id
+    and the pose.
+
+-- agent.py
+    Define the transition, observation, and reward, policy, and belief models.
+
+BASELINE MODIFICATIONS
+
+
+1. How do we define the hints?
+-- The hints are objid : (X,Y)
+-- Here, the problem will model trust by adding noise to the actual location.
+-- Trust will be a variable in the agent itself.
+
+2. How to we add the hints to the observation? We need to modify the observation.
+
+3. Where actually in models do we incorporate the trust parameter?
+-- Give the agent is the trust initially.
+-- Goes into the ObservationModel
+-- based on this, some noise is added to the probability.
+-- If initial trust is 1, the problem will be solved optimally.
+
+
+DATE: 4/15/22
+
+1. Define the change procedure to implement dynamic hints:
+-- The hints could be another type of observation model that are
+        used by MOS Observation and passed along with it.
+    Within the observation model, we can add a probabilistic parameter that
+    adds certain noise to the provided hint. The probability with which to add
+    and how much noise to add can be provided at the start of the simulation.
+-- The agent can then obtain this during the planning / PLanner phase using:
+    - provide observation
+    - belief update.
+-- We also need to add the type of observation hint is (probably if it is different
+     from the ObjectObservation) to observation.py
+-- OOObservation inherited classes provide observations that can be factored by objects.
+    Hint if probably just a simple observation.
+
+- The type of belief that is sampled by the agent i.e., that the POMDP solves for
+    is in belief.py and is based off the type of state.
+- THe belief is then initialized in the agent itself.
+- In the current implementation, the agent is storing the object beliefs - which means
+    that we can probably just store the trust belief based on some initial value.
+    Look at agent.cur_belief (This is probably a superclass parameter)
+
+
+2. The trust parameter may also be explicitly added to the MosOOPOMDP class
+    if we want to model the trust.
+
+
+DATE: 4/18/22
+
+- Discussed division of work during meeting.
+
+DATE: 4/19/22
+- Determined how to observe belief states at given states.
+- Goal is to plot the belief distribution per objects at different timesteps.
+- TODO:
+-- Visualize the belief in the correct states for each object over time.
+-- Determine whether there is an average metric to obtain the belief representation.
+
+DATE: 4/20/22
+- Adding the performance visualizations.
+- Added code for performance visualizing - realized that I need to pad the output
+    results across simulations before taking the average to make sure that the
+    final graph is valid.
+
+
+
